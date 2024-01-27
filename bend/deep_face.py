@@ -3,6 +3,7 @@ from deepface import DeepFace
 import pandas as pd
 import csv
 import json
+import os
 
 backends = [
   'opencv', 
@@ -53,37 +54,48 @@ def get_face_coords(result):
         result_dict[identity.split('/')[-1].split('.')[0]] = (ratio_x, ratio_y)
     return result_dict
 
-def write_csv(coordinates_json):
-    # Read data from people.json file
-    with open('people.json', 'r') as people_file:
-        people_json = json.load(people_file)
+import firebase_admin
+from firebase_admin import credentials, firestore
 
-    # Prepare CSV file
+# Use the service account key JSON file to authenticate
+file_name = 'netwark-10966-firebase-adminsdk-cje0h-e979d7c50d.json'
+file_path = os.path.join(os.path.dirname(__file__), file_name)
+cred = credentials.Certificate(file_path)
+firebase_admin.initialize_app(cred)
+
+# Create a Firestore client
+db = firestore.client()
+
+
+def write_csv(coordinates_json):
     csv_filename = "../graphics/output.csv"
 
-    # Write header to CSV file
     with open(csv_filename, 'w', newline='') as csvfile:
         csv_writer = csv.writer(csvfile)
         csv_writer.writerow(["name", "interests", "hackathon team role", "organization", "tools", "linkedin", "hometown", "occupation", "xcoord", "ycoord"])
 
         # Iterate through the given JSON with coordinates
         for name, coordinates in coordinates_json.items():
-            # Get the person's information from the people JSON
-            person_info = people_json.get(name, {})
+            # Fetch user data from Firestore
+            user_doc = db.collection('users').document(name).get()
+            if user_doc.exists:
+                user_data = user_doc.to_dict()
 
-            # Write a row to the CSV file
-            csv_writer.writerow([
-                name,
-                " ".join(person_info.get("interests", [])),
-                person_info.get("hackathon_team_role", ""),
-                person_info.get("organization", ""),
-                " ".join(person_info.get("tools", [])),
-                person_info.get("linkedin", ""),
-                person_info.get("hometown", "").replace(","," "),
-                person_info.get("occupation", ""),
-                coordinates[0],  # xcoord
-                coordinates[1]   # ycoord
-            ])
+                # Write a row to the CSV file
+                csv_writer.writerow([
+                    name,
+                    " ".join(user_data.get("interests", [])),
+                    user_data.get("hackathon_team_role", ""),
+                    user_data.get("organization", ""),
+                    " ".join(user_data.get("tools", [])),
+                    user_data.get("linkedin", ""),
+                    user_data.get("hometown", "").replace(",", " "),
+                    user_data.get("occupation", ""),
+                    coordinates[0],  # xcoord
+                    coordinates[1]   # ycoord
+                ])
+
+
 while True:
     # Capture video frame-by-frame
     ret, frame = cap.read()
