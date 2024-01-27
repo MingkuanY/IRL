@@ -72,7 +72,7 @@ def write_csv(coordinates_json):
 
     with open(csv_filename, 'w', newline='') as csvfile:
         csv_writer = csv.writer(csvfile)
-        csv_writer.writerow(["name", "interests", "hackathon team role", "organization", "tools", "linkedin", "hometown", "occupation", "xcoord", "ycoord"])
+        csv_writer.writerow(["name", "first_name", "last_name", "hometown", "team_role", "position", "interests", "organization", "contact", "image", "xcoord", "ycoord"])
 
         # Iterate through the given JSON with coordinates
         for name, coordinates in coordinates_json.items():
@@ -84,17 +84,18 @@ def write_csv(coordinates_json):
                 # Write a row to the CSV file
                 csv_writer.writerow([
                     name,
+                    user_data.get("first_name", ""),
+                    user_data.get("last_name", ""),
+                    user_data.get("hometown", ""),
+                    user_data.get("team_role", ""),
+                    user_data.get("position", ""),
                     " ".join(user_data.get("interests", [])),
-                    user_data.get("hackathon_team_role", ""),
                     user_data.get("organization", ""),
-                    " ".join(user_data.get("tools", [])),
-                    user_data.get("linkedin", ""),
-                    user_data.get("hometown", "").replace(",", " "),
-                    user_data.get("occupation", ""),
+                    user_data.get("contact", ""),
+                    user_data.get("image", ""),
                     coordinates[0],  # xcoord
                     coordinates[1]   # ycoord
                 ])
-
 
 while True:
     # Capture video frame-by-frame
