@@ -48,6 +48,7 @@ if __name__ == "__main__":
         with open(input_text_path, "r") as input_file:
             lines = input_file.readlines()
 
+        line = lines[0]
         render_text_on_image([line], font_path, output_path)
         frame = cv2.imread(output_path)
 
