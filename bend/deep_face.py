@@ -31,7 +31,7 @@ models = [
 # result = DeepFace.verify(img1_path = "model_faces/Pranav_Tadepalli.png", img2_path = "pranav_seen.jpg",detector_backend = backends[7])
 
 # Initialize the webcam
-cap = cv2.VideoCapture(1)  # 0 corresponds to the default camera
+cap = cv2.VideoCapture(0)  # 0 corresponds to the default camera
 
 def get_face_coords(result):
     # Initialize an empty dictionary to store the results

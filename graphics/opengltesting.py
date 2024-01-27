@@ -74,6 +74,7 @@ def render():
             ray_direction = uv_to_ray_direction(uv, left_uv_to_rect_x, left_uv_to_rect_y,
                                                  right_uv_to_rect_x, right_uv_to_rect_y)
             
+            # print(ray_origin)
             plane_pos = (ray_origin + ray_direction * 0.15) * 1000
             # print(plane_pos)
             # Perform ray tracing calculations (here, just a placeholder)
