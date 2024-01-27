@@ -57,7 +57,7 @@ blobs = user_images_bucket.list_blobs()
 for blob in blobs:
     # Create local file path
     print(blob)
-    local_file_path = f"{local_model_faces_directory}{blob.name}"
+    local_file_path = f"{local_model_faces_directory}{blob.name}.jpg"
     print(local_file_path)
 
     # Download the blob to the local file

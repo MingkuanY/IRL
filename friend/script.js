@@ -80,7 +80,7 @@ async function submitForm(e) {
   };
 
   // storage
-  const userImagesRef = storageRef(storage, 'user_images/' + userID);
+  const userImagesRef = storageRef(storage, userID);
   await uploadBytes(userImagesRef, image);
 
   // data
