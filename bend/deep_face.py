@@ -96,33 +96,32 @@ def get_face_coords(result):
 
 def write_csv(coordinates_json):
     csv_filename = "../graphics/output.csv"
-
-    with open(csv_filename, 'w', newline='') as csvfile:
-        csv_writer = csv.writer(csvfile)
-        csv_writer.writerow(["name", "first_name", "last_name", "hometown", "team_role", "position", "interests", "organization", "contact", "image", "xcoord", "ycoord"])
-
-        # Iterate through the given JSON with coordinates
-        for name, coordinates in coordinates_json.items():
-            # Fetch user data from Firestore
-            user_doc = db.collection('users').document(name).get()
-            if user_doc.exists:
-                user_data = user_doc.to_dict()
-
-                # Write a row to the CSV file
-                csv_writer.writerow([
-                    name,
-                    user_data.get("first_name", ""),
-                    user_data.get("last_name", ""),
-                    user_data.get("hometown", ""),
-                    user_data.get("team_role", ""),
-                    user_data.get("position", ""),
-                    " ".join(user_data.get("interests", [])),
-                    user_data.get("organization", ""),
-                    user_data.get("contact", ""),
-                    user_data.get("image", ""),
-                    coordinates[0],  # xcoord
-                    coordinates[1]   # ycoord
-                ])
+    # Iterate through the given JSON with coordinates
+    name, coordinates = list(coordinates_json.items())[0] if coordinates_json else ("","")
+    # Fetch user data from Firestore
+    user_doc = db.collection('users').document(name).get()
+    print(user_doc)
+    
+    if user_doc.exists:
+        user_data = user_doc.to_dict()
+        with open(csv_filename, 'w', newline='') as csvfile:
+            csv_writer = csv.writer(csvfile)
+            csv_writer.writerow(["name", "first_name", "last_name", "hometown", "team_role", "position", "interests", "organization", "contact", "image", "xcoord", "ycoord"])
+            # Write a row to the CSV file
+            csv_writer.writerow([
+                name,
+                user_data.get("first_name", ""),
+                user_data.get("last_name", ""),
+                user_data.get("hometown", "").replace(",",""),
+                user_data.get("team_role", ""),
+                user_data.get("position", ""),
+                " ".join(user_data.get("interests", [])),
+                user_data.get("organization", ""),
+                user_data.get("contact", ""),
+                user_data.get("image", ""),
+                coordinates[0],  # xcoord
+                coordinates[1]   # ycoord
+            ])
 
 while True:
     # Capture video frame-by-frame
