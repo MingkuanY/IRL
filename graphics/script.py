@@ -17,6 +17,7 @@ def render_text_on_image(lines, font_path, output_path):
 
     for line in lines:
         content = line.strip().split(',')
+        print(len(content))
 
         if len(content) == 12:
             name, occupation, interests, q,w,e,r,t,a,s, x, y = content
@@ -38,7 +39,7 @@ def render_text_on_image(lines, font_path, output_path):
 
 if __name__ == "__main__":
     font_path = "SourceSansPro-Semibold.ttf"
-    input_text_path = "data.txt"
+    input_text_path = "output.csv"
     output_path = "output.png"
 
     cv2.namedWindow('Video Stream', cv2.WINDOW_NORMAL)
@@ -48,7 +49,7 @@ if __name__ == "__main__":
         with open(input_text_path, "r") as input_file:
             lines = input_file.readlines()
 
-        line = lines[0]
+        line = lines[1] if len(lines) > 1 else ""
         render_text_on_image([line], font_path, output_path)
         frame = cv2.imread(output_path)
 
