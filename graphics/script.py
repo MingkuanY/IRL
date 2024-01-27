@@ -17,8 +17,8 @@ def render_text_on_image(lines, font_path, output_path):
 
     for line in lines:
         content = line.strip().split(',')
-        if len(content) == 10:
-            name, occupation, interests, q,w,e,r,t, x, y = content
+        if len(content) == 12:
+            name, occupation, interests, q,w,e,r,t,a,s, x, y = content
             x, y = float(x), float(y)
             x*=X_CONS
             y*=Y_CONS
@@ -45,7 +45,7 @@ if __name__ == "__main__":
             lines = input_file.readlines()
         line = lines[1] if len(lines) > 1 else ""
 
-        render_text_on_image(lines, font_path, output_path)
+        render_text_on_image([line], font_path, output_path)
         frame = cv2.imread(output_path)
 
         # Apply horizontal flipping to mirror the output
