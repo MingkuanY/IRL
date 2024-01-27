@@ -1,4 +1,4 @@
-meow meow meow, help, interest, 2700, 1000
-pranavvvparnarv, developer, moms, 50, 50
+meow meow meow, help, interest, 2000, 1300
+pranavvvparnarv, developer, moms, 1800, 1200
 mingkuant, artist, computers, 2000, 1000
-pranav, mom, mom, 2500, 500
+pranav, mom, mom, 2300, 500
