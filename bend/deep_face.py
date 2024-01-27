@@ -5,6 +5,9 @@ import csv
 import json
 import os
 
+import firebase_admin
+from firebase_admin import credentials, firestore, storage
+
 backends = [
   'opencv', 
   'ssd', 
@@ -27,6 +30,43 @@ models = [
   "Dlib", 
   "SFace",
 ]
+
+face_representations_file = os.path.join('model_faces', 'representations_vgg_face.pkl')
+if os.path.exists(face_representations_file):
+    os.remove(face_representations_file)
+
+
+# Use the service account key JSON file to authenticate
+file_name = 'netwark-10966-firebase-adminsdk-cje0h-e979d7c50d.json'
+file_path = os.path.join(os.path.dirname(__file__), file_name)
+cred = credentials.Certificate(file_path)
+firebase_admin.initialize_app(cred)
+
+# Create a Firestore client
+db = firestore.client()
+
+# Download images from Firebase Storage to local "model_faces" directory
+user_images_bucket_name = "netwark-10966.appspot.com"
+user_images_bucket = storage.bucket(user_images_bucket_name)
+blobs = user_images_bucket.list_blobs()
+local_model_faces_directory = "model_faces/"
+
+blobs = user_images_bucket.list_blobs()
+
+# Download images
+for blob in blobs:
+    # Create local file path
+    print(blob)
+    local_file_path = f"{local_model_faces_directory}{blob.name}"
+    print(local_file_path)
+
+    # Download the blob to the local file
+    blob.download_to_filename(local_file_path)
+
+    print(f"Downloaded {blob.name} to {local_file_path}")
+
+
+
 
 # result = DeepFace.verify(img1_path = "model_faces/Pranav_Tadepalli.png", img2_path = "pranav_seen.jpg",detector_backend = backends[7])
 
@@ -53,19 +93,6 @@ def get_face_coords(result):
         # Store the result in the dictionary
         result_dict[identity.split('/')[-1].split('.')[0]] = (ratio_x, ratio_y)
     return result_dict
-
-import firebase_admin
-from firebase_admin import credentials, firestore
-
-# Use the service account key JSON file to authenticate
-file_name = 'netwark-10966-firebase-adminsdk-cje0h-e979d7c50d.json'
-file_path = os.path.join(os.path.dirname(__file__), file_name)
-cred = credentials.Certificate(file_path)
-firebase_admin.initialize_app(cred)
-
-# Create a Firestore client
-db = firestore.client()
-
 
 def write_csv(coordinates_json):
     csv_filename = "../graphics/output.csv"
