@@ -1,5 +1,4 @@
 from PIL import Image, ImageDraw, ImageFont
-import pyautogui
 import cv2
 
 X_CONS = 3024 #TODO figure out what's happening with this...
@@ -21,9 +20,11 @@ def render_text_on_image(lines, font_path, output_path):
     # Render each line of text onto the image
     for line in lines:
         content = line.strip().split(',')
-        if len(content) == 5:
-            name, occupation, interests, x, y = content
-            x, y = int(x), int(y)
+        if len(content) == 10:
+            name, occupation, interests, q,w,e,r,t, x, y = content
+            x, y = float(x), float(y)
+            x*=X_CONS
+            y*=Y_CONS
 
             # Render name with the biggest label
             draw.text((x, y), name, font=font_name, fill=(94, 255, 124), align="right")
@@ -42,7 +43,7 @@ def render_text_on_image(lines, font_path, output_path):
 if __name__ == "__main__":
     # Specify the path to the font file, input text file, and output PNG file
     font_path = "SourceSansPro-Semibold.ttf"
-    input_text_path = "data.txt"
+    input_text_path = "output.csv"
     output_path = "output.png"
 
     # Create an OpenCV window
@@ -55,9 +56,10 @@ if __name__ == "__main__":
         # Read all lines from the input file
         with open(input_text_path, "r") as input_file:
             lines = input_file.readlines()
+        line = lines[1] if len(lines) > 1 else ""
 
         # Render the frame and update the OpenCV window
-        render_text_on_image(lines, font_path, output_path)
+        render_text_on_image([line], font_path, output_path)
         frame = cv2.imread(output_path)
         cv2.imshow('Video Stream', frame)
 
