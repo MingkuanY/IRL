@@ -1,0 +1,38 @@
+{
+    "Pranav_Tadepalli": {
+      "interests": ["Machine Learning", "Computer Vision", "Data Science"],
+      "hackathon_team_role": "Team Lead",
+      "organization": "Tech Innovators",
+      "tools": ["Python", "TensorFlow", "OpenCV"],
+      "linkedin": "https://www.linkedin.com/in/pranav-tadepalli/",
+      "hometown": "San Francisco, CA",
+      "occupation": "Software Engineer"
+    },
+    "Katherine_Huang": {
+      "interests": ["Web Development", "User Experience Design", "Blockchain"],
+      "hackathon_team_role": "Frontend Developer",
+      "organization": "CodeCrafters",
+      "tools": ["HTML", "CSS", "JavaScript", "React"],
+      "linkedin": "https://www.linkedin.com/in/katherine-huang/",
+      "hometown": "New York, NY",
+      "occupation": "UX/UI Designer"
+    },
+    "Mingkuan_Yan": {
+      "interests": ["Artificial Intelligence", "Robotics", "Natural Language Processing"],
+      "hackathon_team_role": "Algorithm Developer",
+      "organization": "InnoTech Labs",
+      "tools": ["Java", "Python", "NLTK"],
+      "linkedin": "https://www.linkedin.com/in/mingkuan-yan/",
+      "hometown": "Beijing, China",
+      "occupation": "Research Scientist"
+    },
+    "Alex_Kranias": {
+      "interests": ["Cybersecurity", "Penetration Testing", "Ethical Hacking"],
+      "hackathon_team_role": "Security Analyst",
+      "organization": "SecureNet Solutions",
+      "tools": ["Kali Linux", "Wireshark", "Metasploit"],
+      "linkedin": "https://www.linkedin.com/in/alex-kranias/",
+      "hometown": "Athens, Greece",
+      "occupation": "Security Consultant"
+    }
+  }
