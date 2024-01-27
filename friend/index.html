@@ -7,15 +7,15 @@
 </head>
 <body>
   <h1>NetwARk</h1>
-  <form action="" id="form">
+  <form action="" id="form" name="form">
     <div>
       <label for="fname">Your First Name:</label>
       <input type="text" id="fname" name="fname">
     </div>
 
     <div>
-      <label for="fname">Your First Name:</label>
-      <input type="text" id="fname" name="fname">
+      <label for="lname">Your Last Name:</label>
+      <input type="text" id="lname" name="lname">
     </div>
 
     <div>
@@ -24,11 +24,21 @@
     </div>
 
     <div>
-      <label for="role">Your Role:</label>
+      <label for="role">Your Team Role:</label>
       <input type="text" id="role" name="role">
     </div>
 
     <div>
+      <label for="position">Your Position:</label>
+      <input type="text" id="position" name="position">
+    </div>
+
+    <div>
+      <label for="organization">Your Organization:</label>
+      <input type="text" id="organization" name="organization">
+    </div>
+
+    <div class="interestsContainer">
       <label for="interests">Your Interests:</label>
       <div>
         <input type="checkbox" id="design" name="design">
@@ -47,7 +57,7 @@
 
     <div>
       <label for="pic">Upload a Pic of Yourself:</label>
-      <input type="file" id="pic" name="pic">
+      <input type="file" id="pic" name="pic" required>
     </div>
 
     <div>
@@ -55,7 +65,10 @@
       <label for="terms">I agree to these <a href="#">Terms and Conditions</a>.</label>
     </div>
 
-    <input type="submit">
+    <input type="submit" id="submit">
   </form>
+  <script src="script.js" type="module"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
 </body>
 </html>
