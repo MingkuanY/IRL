@@ -44,11 +44,11 @@ def uv_to_ray_origin(uv):
 
 
 # Load your own image
-input_image_path = 'test_images/input_image.png'
+input_image_path = 'test_images/input_image2.png'
 input_image = Image.open(input_image_path)
 
 # Downscale the image by 10x
-downscale_factor = 3
+downscale_factor = 1
 input_image = input_image.resize((input_image.width // downscale_factor, input_image.height // downscale_factor))
 
 
@@ -58,20 +58,23 @@ def main_image(uv, resolution):
     ray_direction = uv_to_ray_direction(uv, left_uv_to_rect_x, left_uv_to_rect_y,
                                          right_uv_to_rect_x, right_uv_to_rect_y)
     plane_pos = ray_origin + ray_direction * 0.15 #originall named plane_pos
-    pos = np.floor(plane_pos[:2]*7000)  # Adjust the scaling factor
+    pos = np.floor(plane_pos[:2]*7500)  # Adjust the scaling factor
     
     #nothign = all blue
     #1000-5000 = blue stars
-    #900-10000 too big
+    #9000-10000 too big
 
     # Get the color from your input image based on the warped coordinates
     x, y = int(pos[0]), int(pos[1])
-    x = max(0, min(x, input_image.width - 1))
-    y = max(0, min(y, input_image.height - 1))
-    color = input_image.getpixel((x, y))
+
+    color = 0
+    if x < input_image.width - 1 and x > 0 and y < input_image.height - 1 and y > 0:
+        color = input_image.getpixel((x, y))
+        # Append an alpha channel (transparency) to the color
+        color = (*color, 255)  # Assuming 255 for fully opaque
+    else:
+        color = (0,0,0,0)
     
-    # Append an alpha channel (transparency) to the color
-    #color = (*color, 255)  # Assuming 255 for fully opaque
 
     return color
 
