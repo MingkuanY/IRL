@@ -5,6 +5,8 @@ import csv
 import json
 import os
 
+# import matplotlib.pyplot as plt
+
 import firebase_admin
 from firebase_admin import credentials, firestore, storage
 
@@ -128,8 +130,18 @@ def write_csv(coordinates_json):
 while True:
     # Capture video frame-by-frame
     ret, frame = cap.read()
-        # Convert the image to grayscale
+    # Convert the image to grayscale
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    # Downsample
+    proportion_of_full_resolution = 0.07
+    gray = cv2.resize(gray, (int(gray.shape[1] * (proportion_of_full_resolution)**0.5), int(gray.shape[0] * (proportion_of_full_resolution)**0.5)))
+
+    # # Display the resized image on the existing Matplotlib screen
+    # plt.imshow(gray, cmap='gray')
+    # plt.title('Resized Image')
+    # plt.axis('off')
+    # plt.show()
 
     # Create a three-channel representation of the grayscale image
     gray_rgb = cv2.merge([gray, gray, gray])
