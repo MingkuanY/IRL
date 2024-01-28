@@ -116,7 +116,7 @@ for blob in blobs:
 # Initialize the webcam
 cap = cv2.VideoCapture(0)  # 0 corresponds to the default camera
 
-proportion_of_full_resolution = 0.07
+proportion_of_full_resolution = 0.6
 
 def get_face_coords(result):
     # Initialize an empty dictionary to store the results
