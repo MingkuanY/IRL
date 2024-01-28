@@ -40,6 +40,10 @@ response = client.chat.completions.create(
 
 # Get and print the generated response
 generated_response = response.choices[0].message.content
+roles, interests = [e.split(": ")[1].split(", ") for e in generated_response.split("====")[1].split('\n')]
+roles = set(roles)
+interests = set(interests)
+
 print(generated_response)
 
 

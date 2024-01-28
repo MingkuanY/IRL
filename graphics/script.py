@@ -3,6 +3,10 @@ import cv2
 import numpy as np
 import random
 import time
+import os
+import firebase_admin
+from firebase_admin import credentials, firestore, storage
+
 
 X_CONS = 3024
 Y_CONS = 1514
@@ -11,10 +15,79 @@ animation_time = 5
 current_animation_time = 0
 current_text_animation_time = 0
 image_orig = Image.new("RGBA", (X_CONS, Y_CONS), (3, 3, 3, 255))  # Dark blue background
-
 star = Image.open("starry.png")
+
+#############################################################
+#                     USER MATCHING
+from openai import OpenAI
+
+client = OpenAI()
+
+response = client.chat.completions.create(
+  model="gpt-3.5-turbo",
+  messages=[
+    {"role": "system", "content": "You are analyzing text and outputting lists."},
+    {"role": "user", "content": """
+                                Roles: Developer, Project Manager, Designer, Artist, Story Teller
+
+                                Interests: Web Dev, UI/UX Design, AR/VR, Game Dev, DevOps, Accessibility, Mobile App Dev, Cybersecurity, Machine Learning, Databases, EdTech, Networking, Design, FinTech
+
+                                Based on the user request, reply with the roles and interests that best match their wants in the format:
+
+                                
+                                Roles: role1, role2
+                                Interests: interest1, interest2
+                                
+
+                                User Request: I am looking for a graphic designer familiar with figma and unity, a developer who knows ML tools, and a project manager. I want to build some sort of productivity based AR/VR app.
+                                """
+                                }
+  ]
+)
+
+# Get and print the generated response
+generated_response = response.choices[0].message.content
+print(generated_response)
+roles, interests = [e.split(": ")[1].strip().split(", ") for e in generated_response.strip().split('\n')]
+roles = set(roles)
+interests = set(interests)
+
+print(generated_response)
+
+
+#get json stuff
+# Use the service account key JSON file to authenticate
+file_name = '../bend/netwark-10966-firebase-adminsdk-cje0h-e979d7c50d.json'
+file_path = os.path.join(os.path.dirname(__file__), file_name)
+cred = credentials.Certificate(file_path)
+firebase_admin.initialize_app(cred)
+
+# Create a Firestore client
+db = firestore.client()
+
+# Download images from Firebase Storage to local "model_faces" directory
+user_images_bucket_name = "netwark-10966.appspot.com"
+user_images_bucket = storage.bucket(user_images_bucket_name)
+blobs = user_images_bucket.list_blobs()
+sparkly = []
+for name in blobs:
+    name = name.name
+    user_doc = db.collection('users').document(name).get().to_dict()
+    if any(e for e in user_doc["interests"] if e in interests) or user_doc["team_role"] in roles:
+        sparkly.append(name)
+
+print(sparkly)
+
+
+
+
+#############################################################
+
+
+
 def determine_animation(name):
-    if name == "Katherine_Huang":
+    global sparkly
+    if name in sparkly:
         return True
     else:
         return False
