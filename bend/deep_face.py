@@ -10,6 +10,42 @@ import os
 import firebase_admin
 from firebase_admin import credentials, firestore, storage
 
+#############################################################
+#                     USER MATCHING
+from openai import OpenAI
+
+client = OpenAI()
+
+response = client.chat.completions.create(
+  model="gpt-3.5-turbo",
+  messages=[
+    {"role": "system", "content": "You are analyzing text and outputting lists."},
+    {"role": "user", "content": """
+                                Roles: Developer, Project Manager, Designer, Artist, Story Teller
+
+                                Interests: Web Dev, UI/UX Design, AR/VR, Game Dev, DevOps, Accessibility, Mobile App Dev, Cybersecurity, Machine Learning, Databases, EdTech, Networking, Design, FinTech
+
+                                Based on the user request, reply with the roles and interests that best match their wants in the format:
+
+                                ====
+                                Roles: role1, role2
+                                Interests: interest1, interest2
+                                ====
+
+                                User Request: I am looking for a graphic designer familiar with figma and unity, a developer who knows ML tools, and a project manager. I want to build some sort of productivity based AR/VR app.
+                                """
+                                }
+  ]
+)
+
+# Get and print the generated response
+generated_response = response.choices[0].message.content
+print(generated_response)
+
+
+
+#############################################################
+
 backends = [
   'opencv', 
   'ssd', 
