@@ -12,7 +12,7 @@ current_animation_time = 0
 current_text_animation_time = 0
 image_orig = Image.new("RGBA", (X_CONS, Y_CONS), (3, 3, 3, 255))  # Dark blue background
 
-star = Image.open("starry1.png")
+star = Image.open("starry.png")
 def determine_animation(name):
     if name == "Katherine_Huang":
         return True
@@ -57,10 +57,10 @@ def render_text_on_image(lines, font_path, output_path):
             recent_name = name
 
             draw.text((x_real, y_real), (first+"\n"+last), font=font_name, fill=(75, 75, 75), align="right")
-            draw.text((x, y), (first+" "+last)[:min((150,int(current_text_animation_time)))], font=font_name, fill=(94, 255, 124), align="right")
-            draw.text((x, y + 60), hometown[:min((150,int(current_text_animation_time)))], font=font_occupation, fill=(45, 227, 227), align="right")
-            draw.text((x, y + 100), interests[:min((150,int(current_text_animation_time)))], font=font_interests, fill=(45, 227, 227), align="right")
-            draw.text((x, y + 140), team_role[:min((150,int(current_text_animation_time)))], font=font_interests, fill=(45, 227, 227), align="right")
+            draw.text((x, y), (first+" "+last)[:min((150,int(current_text_animation_time)))], font=font_name, fill=(255, 255, 255), align="right")
+            draw.text((x, y + 60), hometown[:min((150,int(current_text_animation_time)))], font=font_occupation, fill=(241, 252, 102), align="right")
+            draw.text((x, y + 100), interests[:min((150,int(current_text_animation_time)))], font=font_interests, fill=(241, 252, 102), align="right")
+            draw.text((x, y + 140), team_role[:min((150,int(current_text_animation_time)))], font=font_interests, fill=(241, 252, 102), align="right")
 
         else:
             print("Error: Invalid input format in the text file.")
