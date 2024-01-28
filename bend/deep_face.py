@@ -75,6 +75,8 @@ for blob in blobs:
 # Initialize the webcam
 cap = cv2.VideoCapture(0)  # 0 corresponds to the default camera
 
+proportion_of_full_resolution = 0.07
+
 def get_face_coords(result):
     # Initialize an empty dictionary to store the results
     result_dict = {}
@@ -89,8 +91,8 @@ def get_face_coords(result):
         source_h = row['source_h']
 
         # Calculate the ratio of the top of the head relative to the full resolution
-        ratio_x = source_x / 1920  # Assuming full resolution width is 1920
-        ratio_y = source_y / 1080  # Assuming full resolution height is 1080
+        ratio_x = source_x / (1920 * (proportion_of_full_resolution)**0.5)  # Assuming full resolution width is 1920
+        ratio_y = source_y / (1080 * (proportion_of_full_resolution)**0.5)  # Assuming full resolution height is 1080
 
         # Store the result in the dictionary
         result_dict[identity.split('/')[-1].split('.')[0]] = (ratio_x, ratio_y)
@@ -134,7 +136,6 @@ while True:
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     # Downsample
-    proportion_of_full_resolution = 0.07
     gray = cv2.resize(gray, (int(gray.shape[1] * (proportion_of_full_resolution)**0.5), int(gray.shape[0] * (proportion_of_full_resolution)**0.5)))
 
     # # Display the resized image on the existing Matplotlib screen
