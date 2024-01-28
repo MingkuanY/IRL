@@ -4,68 +4,80 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>netwARk</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Antic&family=Anton&family=Cabin:ital@0;1&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h1>NetwARk</h1>
+  <img class="backgroundImage" src="assets/networkBackground.jpg" alt="Netwark Background">
+  <h1 class="anton">
+    <span class="ar anton glitch" aria-hidden="true">NETW<span class="ar anton">AR</span>K</span>
+    NETW<span class="ar anton">AR</span>K
+    <span class="ar anton glitch" aria-hidden="true">NETW<span class="ar anton">AR</span>K</span>
+  </h1>
+  <h2 class="cabin">W<span class="ar cabin">AR</span>K BETT<span class="ar cabin">AR</span></h2>
   <form action="" id="form" name="form">
-    <div>
-      <label for="fname">Your First Name:</label>
-      <input type="text" id="fname" name="fname">
-    </div>
-
-    <div>
-      <label for="lname">Your Last Name:</label>
-      <input type="text" id="lname" name="lname">
-    </div>
-
-    <div>
-      <label for="hometown">Your Hometown:</label>
-      <input type="text" id="hometown" name="hometown">
-    </div>
-
-    <div>
-      <label for="role">Your Team Role:</label>
-      <input type="text" id="role" name="role">
-    </div>
-
-    <div>
-      <label for="position">Your Position:</label>
-      <input type="text" id="position" name="position">
-    </div>
-
-    <div>
-      <label for="organization">Your Organization:</label>
-      <input type="text" id="organization" name="organization">
-    </div>
-
-    <div class="interestsContainer">
-      <label for="interests">Your Interests:</label>
-      <div>
-        <input type="checkbox" id="design" name="design">
-        <label for="design">Design</label>
+    <div class="nameContainer">
+      <div class="fnameContainer">
+        <img src="assets/Down.svg" alt="Arrow">
+        <input type="text" id="fname" name="fname" placeholder="First Name">
       </div>
-      <div>
-        <input type="checkbox" id="vr" name="vr">
-        <label for="vr">VR</label>
+
+      <div class="lnameContainer">
+        <img src="assets/Down.svg" alt="Arrow">
+        <input type="text" id="lname" name="lname" placeholder="Last Name">
       </div>
     </div>
-    
-    <div>
-      <label for="linkedin">Your LinkedIn:</label>
-      <input type="text" id="linkedin" name="linkedin">
+
+    <div class="inputContainer marginTop">
+      <img src="assets/Down.svg" alt="Arrow">
+      <input type="text" id="hometown" name="hometown" placeholder="Hometown">
     </div>
 
-    <div>
-      <label for="pic">Upload a Pic of Yourself:</label>
-      <input type="file" id="pic" name="pic" required>
+    <div class="inputContainer moreMarginTop">
+      <img src="assets/Down.svg" alt="Arrow">
+      <input type="text" id="role" name="role" placeholder="Team Role">
     </div>
 
-    <div>
-      <input type="checkbox" id="terms" name="terms" required>
-      <label for="terms">I agree to these <a href="#">Terms and Conditions</a>.</label>
+    <div class="inputContainer moreMarginTop">
+      <img src="assets/Down.svg" alt="Arrow">
+      <input type="text" id="position" name="position" placeholder="Position">
     </div>
 
-    <input type="submit" id="submit">
+    <div class="inputContainer marginTop">
+      <img src="assets/Down.svg" alt="Arrow">
+      <input type="text" id="organization" name="organization" placeholder="Organization">
+    </div>
+
+    <div class="inputContainer marginTop">
+      <img src="assets/Down.svg" alt="Arrow">
+      <input type="text" id="linkedin" name="linkedin" placeholder="LinkedIn Url">
+    </div>
+
+    <div class="interestsContainer moreMarginTop">
+      <h3>Choose Your Interests</h3>
+      <div id="interests">
+      </div>
+    </div>
+
+    <div class="inputContainer moreMarginTop">
+      <label class="fileUpload" for="pic">Upload a Pic of Yourself</label>
+      <input class="fileInput" type="file" id="pic" name="pic" required>
+    </div>
+
+    <div class="termsContainer someMarginTop">
+      <input class="termsInput" type="checkbox" id="terms" name="terms" required>
+      <label class="termsLabel" for="terms">I agree with the <a class="termsAndConditions" href="#" onclick="return false;">Terms and Conditions</a></label>
+    </div>
+
+    <button type="submit" id="submit" class="submitButton moreMarginTop">
+      <span class="span"></span>
+      <span class="span"></span>
+      <span class="span"></span>
+      <span class="span"></span>
+      ST<span class="ar">AR</span>T W<span class="ar">AR</span>KING
+    </button>
   </form>
   <script src="script.js" type="module"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>

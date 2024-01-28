@@ -80,7 +80,7 @@ async function submitForm(e) {
   };
 
   // storage
-  const userImagesRef = storageRef(storage, 'user_images/' + userID);
+  const userImagesRef = storageRef(storage, userID);
   await uploadBytes(userImagesRef, image);
 
   // data
@@ -88,6 +88,80 @@ async function submitForm(e) {
   const docRef = doc(collectionRef, userID);
   await setDoc(docRef, data);
 
+  const interestElements = document.getElementById('interests').querySelectorAll('.interest');
+  interestElements.forEach(interest => {
+    interest.classList.remove('selected');
+  });
+
   // clear form
   document.getElementById('form').reset();
 }
+
+
+
+
+
+// prompts
+
+const prompts = [
+  'Web Dev',
+  'UI/UX Design',
+  'AR/VR',
+  'Game Dev',
+  'DevOps',
+  'Accessibility',
+  'Mobile App Dev',
+  'Cybersecurity',
+  'Machine Learning',
+  'Databases',
+  'EdTech',
+  'Networking',
+  'Design',
+  'FinTech'
+];
+
+const interests = document.getElementById('interests');
+
+prompts.forEach(prompt => {
+  const interestContainer = document.createElement('div');
+  interestContainer.classList.add('interest');
+  interestContainer.id = prompt.toLowerCase().replace(/\s+/g, ''); // Set a unique ID for each container
+
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.id = prompt.toLowerCase().replace(/\s+/g, '') + 'Checkbox'; // Set a unique ID for each checkbox
+  checkbox.classList.add('interestCheckbox');
+
+  const label = document.createElement('label');
+  label.setAttribute('for', checkbox.id);
+  label.textContent = prompt;
+
+  interestContainer.appendChild(checkbox);
+  interestContainer.appendChild(label);
+  interests.appendChild(interestContainer);
+
+  // Add click event listener to each container
+  interestContainer.addEventListener('click', (e) => {
+
+    checkbox.checked = !checkbox.checked;
+
+    interestContainer.classList.toggle('selected', checkbox.checked);
+
+    e.preventDefault();
+    e.stopPropagation();
+  });
+});
+
+
+/* file selected */
+
+const fileInput = document.getElementById('pic');
+const fileLabel = document.querySelector('.fileUpload');
+
+fileInput.addEventListener('change', () => {
+  if (fileInput.files.length > 0) {
+    fileLabel.classList.add('fileSelected');
+  } else {
+    fileLabel.classList.remove('fileSelected');
+  }
+});
