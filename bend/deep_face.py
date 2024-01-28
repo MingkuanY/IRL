@@ -5,6 +5,51 @@ import csv
 import json
 import os
 
+# import matplotlib.pyplot as plt
+
+import firebase_admin
+from firebase_admin import credentials, firestore, storage
+
+#############################################################
+#                     USER MATCHING
+from openai import OpenAI
+
+client = OpenAI()
+
+response = client.chat.completions.create(
+  model="gpt-3.5-turbo",
+  messages=[
+    {"role": "system", "content": "You are analyzing text and outputting lists."},
+    {"role": "user", "content": """
+                                Roles: Developer, Project Manager, Designer, Artist, Story Teller
+
+                                Interests: Web Dev, UI/UX Design, AR/VR, Game Dev, DevOps, Accessibility, Mobile App Dev, Cybersecurity, Machine Learning, Databases, EdTech, Networking, Design, FinTech
+
+                                Based on the user request, reply with the roles and interests that best match their wants in the format:
+
+                                ====
+                                Roles: role1, role2
+                                Interests: interest1, interest2
+                                ====
+
+                                User Request: I am looking for a graphic designer familiar with figma and unity, a developer who knows ML tools, and a project manager. I want to build some sort of productivity based AR/VR app.
+                                """
+                                }
+  ]
+)
+
+# Get and print the generated response
+generated_response = response.choices[0].message.content
+roles, interests = [e.split(": ")[1].split(", ") for e in generated_response.split("====")[1].split('\n')]
+roles = set(roles)
+interests = set(interests)
+
+print(generated_response)
+
+
+
+#############################################################
+
 backends = [
   'opencv', 
   'ssd', 
@@ -28,10 +73,49 @@ models = [
   "SFace",
 ]
 
+face_representations_file = os.path.join('model_faces', 'representations_vgg_face.pkl')
+if os.path.exists(face_representations_file):
+    os.remove(face_representations_file)
+
+
+# Use the service account key JSON file to authenticate
+file_name = 'netwark-10966-firebase-adminsdk-cje0h-e979d7c50d.json'
+file_path = os.path.join(os.path.dirname(__file__), file_name)
+cred = credentials.Certificate(file_path)
+firebase_admin.initialize_app(cred)
+
+# Create a Firestore client
+db = firestore.client()
+
+# Download images from Firebase Storage to local "model_faces" directory
+user_images_bucket_name = "netwark-10966.appspot.com"
+user_images_bucket = storage.bucket(user_images_bucket_name)
+blobs = user_images_bucket.list_blobs()
+local_model_faces_directory = "model_faces/"
+
+blobs = user_images_bucket.list_blobs()
+
+# Download images
+for blob in blobs:
+    # Create local file path
+    print(blob)
+    local_file_path = f"{local_model_faces_directory}{blob.name}.jpg"
+    print(local_file_path)
+
+    # Download the blob to the local file
+    blob.download_to_filename(local_file_path)
+
+    print(f"Downloaded {blob.name} to {local_file_path}")
+
+
+
+
 # result = DeepFace.verify(img1_path = "model_faces/Pranav_Tadepalli.png", img2_path = "pranav_seen.jpg",detector_backend = backends[7])
 
 # Initialize the webcam
 cap = cv2.VideoCapture(0)  # 0 corresponds to the default camera
+
+proportion_of_full_resolution = 0.6
 
 def get_face_coords(result):
     # Initialize an empty dictionary to store the results
@@ -47,46 +131,34 @@ def get_face_coords(result):
         source_h = row['source_h']
 
         # Calculate the ratio of the top of the head relative to the full resolution
-        ratio_x = source_x / 1920  # Assuming full resolution width is 1920
-        ratio_y = source_y / 1080  # Assuming full resolution height is 1080
+        ratio_x = source_x / (1920 * (proportion_of_full_resolution)**0.5)  # Assuming full resolution width is 1920
+        ratio_y = source_y / (1080 * (proportion_of_full_resolution)**0.5)  # Assuming full resolution height is 1080
 
         # Store the result in the dictionary
         result_dict[identity.split('/')[-1].split('.')[0]] = (ratio_x, ratio_y)
     return result_dict
 
-import firebase_admin
-from firebase_admin import credentials, firestore
-
-# Use the service account key JSON file to authenticate
-file_name = 'netwark-10966-firebase-adminsdk-cje0h-e979d7c50d.json'
-file_path = os.path.join(os.path.dirname(__file__), file_name)
-cred = credentials.Certificate(file_path)
-firebase_admin.initialize_app(cred)
-
-# Create a Firestore client
-db = firestore.client()
-
-
 def write_csv(coordinates_json):
     csv_filename = "../graphics/output.csv"
+    # Iterate through the given JSON with coordinates
+    name, coordinates = list(coordinates_json.items())[0] if coordinates_json else ("","")
 
-    with open(csv_filename, 'w', newline='') as csvfile:
-        csv_writer = csv.writer(csvfile)
-        csv_writer.writerow(["name", "first_name", "last_name", "hometown", "team_role", "position", "interests", "organization", "contact", "image", "xcoord", "ycoord"])
-
-        # Iterate through the given JSON with coordinates
-        for name, coordinates in coordinates_json.items():
-            # Fetch user data from Firestore
-            user_doc = db.collection('users').document(name).get()
-            if user_doc.exists:
-                user_data = user_doc.to_dict()
-
+    if name:
+        # Fetch user data from Firestore
+        user_doc = db.collection('users').document(name).get()
+        print(user_doc)
+        
+        if user_doc.exists:
+            user_data = user_doc.to_dict()
+            with open(csv_filename, 'w', newline='') as csvfile:
+                csv_writer = csv.writer(csvfile)
+                csv_writer.writerow(["name", "first_name", "last_name", "hometown", "team_role", "position", "interests", "organization", "contact", "image", "xcoord", "ycoord"])
                 # Write a row to the CSV file
                 csv_writer.writerow([
                     name,
                     user_data.get("first_name", ""),
                     user_data.get("last_name", ""),
-                    user_data.get("hometown", ""),
+                    user_data.get("hometown", "").replace(",",""),
                     user_data.get("team_role", ""),
                     user_data.get("position", ""),
                     " ".join(user_data.get("interests", [])),
@@ -100,8 +172,17 @@ def write_csv(coordinates_json):
 while True:
     # Capture video frame-by-frame
     ret, frame = cap.read()
-        # Convert the image to grayscale
+    # Convert the image to grayscale
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    # Downsample
+    gray = cv2.resize(gray, (int(gray.shape[1] * (proportion_of_full_resolution)**0.5), int(gray.shape[0] * (proportion_of_full_resolution)**0.5)))
+
+    # # Display the resized image on the existing Matplotlib screen
+    # plt.imshow(gray, cmap='gray')
+    # plt.title('Resized Image')
+    # plt.axis('off')
+    # plt.show()
 
     # Create a three-channel representation of the grayscale image
     gray_rgb = cv2.merge([gray, gray, gray])
