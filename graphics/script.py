@@ -6,6 +6,10 @@ import time
 import os
 import firebase_admin
 from firebase_admin import credentials, firestore, storage
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
 
 
 X_CONS = 3024
@@ -21,40 +25,6 @@ star = Image.open("starry.png")
 #                     USER MATCHING
 from openai import OpenAI
 
-client = OpenAI()
-
-response = client.chat.completions.create(
-  model="gpt-3.5-turbo",
-  messages=[
-    {"role": "system", "content": "You are analyzing text and outputting lists."},
-    {"role": "user", "content": """
-                                Roles: Developer, Project Manager, Designer, Artist, Story Teller
-
-                                Interests: Web Dev, UI/UX Design, AR/VR, Game Dev, DevOps, Accessibility, Mobile App Dev, Cybersecurity, Machine Learning, Databases, EdTech, Networking, Design, FinTech
-
-                                Based on the user request, reply with the roles and interests that best match their wants in the format:
-
-                                
-                                Roles: role1, role2
-                                Interests: interest1, interest2
-                                
-
-                                User Request: I am looking for a graphic designer familiar with figma and unity, a developer who knows ML tools, and a project manager. I want to build some sort of productivity based AR/VR app.
-                                """
-                                }
-  ]
-)
-
-# Get and print the generated response
-generated_response = response.choices[0].message.content
-print(generated_response)
-roles, interests = [e.split(": ")[1].strip().split(", ") for e in generated_response.strip().split('\n')]
-roles = set(roles)
-interests = set(interests)
-
-print(generated_response)
-
-
 #get json stuff
 # Use the service account key JSON file to authenticate
 file_name = '../bend/netwark-10966-firebase-adminsdk-cje0h-e979d7c50d.json'
@@ -69,6 +39,54 @@ db = firestore.client()
 user_images_bucket_name = "netwark-10966.appspot.com"
 user_images_bucket = storage.bucket(user_images_bucket_name)
 blobs = user_images_bucket.list_blobs()
+best_time = 0
+me = ""
+
+for name in blobs:
+    name = name.name
+    user_doc = db.collection('users').document(name).get().to_dict()
+    if float(user_doc["time"]) > best_time:
+        best_time = user_doc["time"]
+        me = user_doc
+
+print(me)
+client = OpenAI()
+
+response = client.chat.completions.create(
+  model="gpt-3.5-turbo",
+  messages=[
+    {"role": "system", "content": "You are analyzing text and outputting lists."},
+    {"role": "user", "content": f"""
+                                Roles: Developer, Project Manager, Designer, Artist, Story Teller
+
+                                Interests: Web Dev, UI/UX Design, AR/VR, Game Dev, DevOps, Accessibility, Mobile App Dev, Cybersecurity, Machine Learning, Databases, EdTech, Networking, Design, FinTech
+
+                                Based on the user request, reply with the roles and interests that best match their wants in the format:
+
+                                
+                                Roles: role1, role2
+                                Interests: interest1, interest2
+                                
+
+                                User Request: {me["interested_in_meeting"]}
+                                """
+                                }
+  ]
+) 
+
+# Get and print the generated response
+generated_response = response.choices[0].message.content
+print(generated_response)
+roles, interests = [e.split(": ")[1].strip().split(", ") for e in generated_response.strip().split('\n') if e.strip()]
+roles = set(roles)
+interests = set(interests)
+seen = set()
+
+print(generated_response)
+
+
+
+blobs = user_images_bucket.list_blobs()
 sparkly = []
 for name in blobs:
     name = name.name
@@ -82,7 +100,36 @@ print(sparkly)
 
 
 #############################################################
+def send_email(sender_email, sender_password, recipient_email, subject, message):
+    # Set up the MIME
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = recipient_email
+    msg['Subject'] = subject
 
+    # Attach the message to the email
+    msg.attach(MIMEText(message, 'plain'))
+
+    # Connect to the SMTP server (Gmail in this case)
+    with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        # Start the TLS (Transport Layer Security) connection
+        server.starttls()
+        
+        # Log in to the email account
+        server.login(sender_email, sender_password)
+        
+        # Send the email
+        server.sendmail(sender_email, recipient_email, msg.as_string())
+
+
+def send_contact(link, gmail, name):
+    # Example usage
+    sender_email = 'orca.pranav@gmail.com'
+    sender_password = 'ungudzitejywjoqz'
+    recipient_email = gmail
+    subject = f'Networking Contact: {name}'
+    message = link
+    send_email(sender_email, sender_password, recipient_email, subject, message)
 
 
 def determine_animation(name):
@@ -106,14 +153,17 @@ def render_text_on_image(lines, font_path, output_path):
         content = line.strip().split(',')
         print(random.randint(0,20))
 
-        if len(content) == 12:
-            name, first, last, hometown,team_role,position,interests,organization,contact,image_link, x, y = content
+        if len(content) == 14:
+            name, first, last, hometown,team_role,position,interests,organization,contact,email,interested_in_meeting,time, x, y = content
             x_real, y_real = float(x), float(y)
             x_real*=X_CONS
             y_real*=Y_CONS
             x,y = 300,300
             if (name!=recent_name):
                 current_text_animation_time = 0
+                if name not in seen:
+                    send_contact(contact,email,first+" "+last)
+                seen.add(name)
                 if determine_animation(name):
                     current_animation_time = animation_time
             
