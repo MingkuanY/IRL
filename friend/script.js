@@ -60,34 +60,115 @@ async function submitForm(e) {
   const lname = capitalizeFirstLetter(getElementVal('lname'));
   const hometown = capitalizeFirstLetter(getElementVal('hometown'));
   const role = capitalizeFirstLetter(getElementVal('role'));
-  const position = capitalizeFirstLetter(getElementVal('position'));
   const organization = capitalizeFirstLetter(getElementVal('organization'));
-  const interests = getCheckedInterests();
   const linkedin = getElementVal('linkedin');
+  const email = getElementVal('email');
+  const interests = getCheckedInterests();
+  const interestedInMeeting = getElementVal('meeting');
   const image = document.getElementById('pic').files[0];
+  const time = new Date().getTime();
 
-  const userID = fname + '_' + lname;
+  if (fname && lname && hometown && role && organization && linkedin && email && interests && interestedInMeeting && image) {
 
-  const data = {
-    first_name: fname,
-    last_name: lname,
-    hometown: hometown,
-    team_role: role,
-    position: position,
-    interests: interests,
-    organization: organization,
-    contact: linkedin,
-  };
+    const userID = fname + '_' + lname;
 
-  // storage
-  const userImagesRef = storageRef(storage, userID);
-  await uploadBytes(userImagesRef, image);
+    const data = {
+      first_name: fname,
+      last_name: lname,
+      hometown: hometown,
+      team_role: role,
+      organization: organization,
+      contact: linkedin,
+      email: email,
+      interests: interests,
+      interested_in_meeting: interestedInMeeting,
+      time: time
+    };
 
-  // data
-  const collectionRef = collection(db, 'users');
-  const docRef = doc(collectionRef, userID);
-  await setDoc(docRef, data);
+    // storage
+    const userImagesRef = storageRef(storage, userID);
+    await uploadBytes(userImagesRef, image);
+
+    // data
+    const collectionRef = collection(db, 'users');
+    const docRef = doc(collectionRef, userID);
+    await setDoc(docRef, data);
+
+    const interestElements = document.getElementById('interests').querySelectorAll('.interest');
+    interestElements.forEach(interest => {
+      interest.classList.remove('selected');
+    });
+  }
 
   // clear form
   document.getElementById('form').reset();
 }
+
+
+
+
+
+// prompts
+
+const prompts = [
+  'Web Dev',
+  'UI/UX Design',
+  'AR/VR',
+  'Game Dev',
+  'DevOps',
+  'Accessibility',
+  'Mobile App Dev',
+  'Cybersecurity',
+  'Machine Learning',
+  'Databases',
+  'EdTech',
+  'Networking',
+  'Design',
+  'FinTech'
+];
+
+const interests = document.getElementById('interests');
+
+prompts.forEach(prompt => {
+  const interestContainer = document.createElement('div');
+  interestContainer.classList.add('interest');
+  interestContainer.id = prompt.toLowerCase().replace(/\s+/g, ''); // Set a unique ID for each container
+
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.id = prompt.toLowerCase().replace(/\s+/g, '') + 'Checkbox'; // Set a unique ID for each checkbox
+  checkbox.classList.add('interestCheckbox');
+
+  const label = document.createElement('label');
+  label.setAttribute('for', checkbox.id);
+  label.textContent = prompt;
+
+  interestContainer.appendChild(checkbox);
+  interestContainer.appendChild(label);
+  interests.appendChild(interestContainer);
+
+  // Add click event listener to each container
+  interestContainer.addEventListener('click', (e) => {
+
+    checkbox.checked = !checkbox.checked;
+
+    interestContainer.classList.toggle('selected', checkbox.checked);
+
+    e.preventDefault();
+    e.stopPropagation();
+  });
+});
+
+
+/* file selected */
+
+const fileInput = document.getElementById('pic');
+const fileLabel = document.querySelector('.fileUpload');
+
+fileInput.addEventListener('change', () => {
+  if (fileInput.files.length > 0) {
+    fileLabel.classList.add('fileSelected');
+  } else {
+    fileLabel.classList.remove('fileSelected');
+  }
+});
