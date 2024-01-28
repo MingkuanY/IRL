@@ -12,9 +12,6 @@ from firebase_admin import credentials, firestore, storage
 
 #############################################################
 #                     USER MATCHING
-
-# Define the prompt
-prompt = 
 import openai
 
 # Set your OpenAI API key
