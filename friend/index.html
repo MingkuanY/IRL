@@ -42,11 +42,6 @@
 
     <div class="inputContainer moreMarginTop">
       <img src="assets/Down.svg" alt="Arrow">
-      <input type="text" id="position" name="position" placeholder="Position">
-    </div>
-
-    <div class="inputContainer marginTop">
-      <img src="assets/Down.svg" alt="Arrow">
       <input type="text" id="organization" name="organization" placeholder="Organization">
     </div>
 
@@ -55,9 +50,22 @@
       <input type="text" id="linkedin" name="linkedin" placeholder="LinkedIn Url">
     </div>
 
+    <div class="inputContainer marginTop">
+      <img src="assets/Down.svg" alt="Arrow">
+      <input type="text" id="email" name="email" placeholder="Email">
+    </div>
+
     <div class="interestsContainer moreMarginTop">
       <h3>Choose Your Interests</h3>
       <div id="interests">
+      </div>
+    </div>
+
+    <div class="meetingContainer moreMarginTop">
+      <h3>Who Are You Interested in Meeting?</h3>
+      <div class="inputContainer">
+        <img src="assets/Down.svg" alt="Arrow">
+        <textarea type="text" id="meeting" name="meeting" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' placeholder="Hint: Software developer with front-end design skills and anyone interested in Unity."></textarea>
       </div>
     </div>
 

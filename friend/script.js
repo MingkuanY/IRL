@@ -60,38 +60,45 @@ async function submitForm(e) {
   const lname = capitalizeFirstLetter(getElementVal('lname'));
   const hometown = capitalizeFirstLetter(getElementVal('hometown'));
   const role = capitalizeFirstLetter(getElementVal('role'));
-  const position = capitalizeFirstLetter(getElementVal('position'));
   const organization = capitalizeFirstLetter(getElementVal('organization'));
-  const interests = getCheckedInterests();
   const linkedin = getElementVal('linkedin');
+  const email = getElementVal('email');
+  const interests = getCheckedInterests();
+  const interestedInMeeting = getElementVal('meeting');
   const image = document.getElementById('pic').files[0];
+  const time = new Date().getTime();
 
-  const userID = fname + '_' + lname;
+  if (fname && lname && hometown && role && organization && linkedin && email && interests && interestedInMeeting && image) {
 
-  const data = {
-    first_name: fname,
-    last_name: lname,
-    hometown: hometown,
-    team_role: role,
-    position: position,
-    interests: interests,
-    organization: organization,
-    contact: linkedin,
-  };
+    const userID = fname + '_' + lname;
 
-  // storage
-  const userImagesRef = storageRef(storage, userID);
-  await uploadBytes(userImagesRef, image);
+    const data = {
+      first_name: fname,
+      last_name: lname,
+      hometown: hometown,
+      team_role: role,
+      organization: organization,
+      contact: linkedin,
+      email: email,
+      interests: interests,
+      interested_in_meeting: interestedInMeeting,
+      time: time
+    };
 
-  // data
-  const collectionRef = collection(db, 'users');
-  const docRef = doc(collectionRef, userID);
-  await setDoc(docRef, data);
+    // storage
+    const userImagesRef = storageRef(storage, userID);
+    await uploadBytes(userImagesRef, image);
 
-  const interestElements = document.getElementById('interests').querySelectorAll('.interest');
-  interestElements.forEach(interest => {
-    interest.classList.remove('selected');
-  });
+    // data
+    const collectionRef = collection(db, 'users');
+    const docRef = doc(collectionRef, userID);
+    await setDoc(docRef, data);
+
+    const interestElements = document.getElementById('interests').querySelectorAll('.interest');
+    interestElements.forEach(interest => {
+      interest.classList.remove('selected');
+    });
+  }
 
   // clear form
   document.getElementById('form').reset();
